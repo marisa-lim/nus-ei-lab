@@ -1,6 +1,6 @@
-# *************************** AUTHOR: KHIN PHONE MAY *****************************
+# *************************** AUTHOR: MARISA LIM *********************************
 # ******************* EI LAB, ADVANCED ROBOTICS CENTRE, NUS **********************
-# ************************** biekpm@nus.edu.sg ***********************************
+# ************************** marisa.lim@u.nus.edu ********************************
 # DESCRIPTION : move UR by entering the coordinates in pos and control the finger 
 # flexion via an external pneumatic control box. Please check the Com Port of 
 # the control box before starting the program. 
@@ -12,7 +12,7 @@ import numpy as np
 from time import sleep
 
 from UR10 import *
-from valve import *
+from ur5e_valve import *
 
 class PickNPlace():
 	def __init__(self):
@@ -29,8 +29,8 @@ class PickNPlace():
 
 	def start(self):
 
-		#change UR coordinates in pos
-		#coordinates need to be taken from BASE Feature in UR Tablet
+		# coordinates are pre-determined here
+		# coordinates need to be taken from BASE Feature in UR Tablet
 
 		poshome = [-26.90, 460.70, 229.15, 0.035, 3.156, -0.017]
 
@@ -59,14 +59,19 @@ class PickNPlace():
 		poscherry2_up2 = [-220.81, 445.54, 229.15, 0.035, 3.156, 0.017]
 		poscherry2_drop = [-220.81, 445.54, 135.62, 0.035, 3.156, 0.017]
 
+		# wait for the gripper to calibrate
+		sleep(6) # 6 seconds for gripper to execute commands in Arduino code
+
 		# broccoli
-		self.UR10Cont.movej(poshome,1)
+		self.UR10Cont.movej(poshome,1) # position, time in seconds
 		sleep(1)
 		self.UR10Cont.movej(posbroccoli_up1,1)
 		sleep(1)
+		self.pump.toggle("claw") # claw position 45 degrees - serial communication with Arduino
+		sleep(2)
 		self.UR10Cont.movej(posbroccoli_pick,1)
 		sleep(1)
-		self.pump.toggle(sa1)
+		self.pump.toggle("sa1") # open all valve - serial communication with Arduino
 		sleep(1)
 		self.UR10Cont.movej(posbroccoli_up1,1)
 		sleep(1) 
@@ -74,7 +79,7 @@ class PickNPlace():
 		sleep(1)
 		self.UR10Cont.movej(posbroccoli_drop,1)
 		sleep(1)
-		self.pump.toggle(sa0)
+		self.pump.toggle("sa0") # close all valve
 		sleep(0.5)
 		self.UR10Cont.movej(posbroccoli_up2,1)
 		sleep(1)
@@ -82,9 +87,11 @@ class PickNPlace():
 		# sausage
 		self.UR10Cont.movej(possau_up1,1)
 		sleep(1)
+		self.pump.toggle("pinch") # pinch position 90 degrees
+		sleep(2)
 		self.UR10Cont.movej(possau_pick,1)
 		sleep(1)
-		self.pump.toggle(sa1)
+		self.pump.toggle("sa1")
 		sleep(2.5)
 		self.UR10Cont.movej(possau_up1,1)
 		sleep(1) 
@@ -92,7 +99,7 @@ class PickNPlace():
 		sleep(1)
 		self.UR10Cont.movej(possau_drop,1)
 		sleep(1)
-		self.pump.toggle(sa0)
+		self.pump.toggle("sa0")
 		sleep(0.5)
 		self.UR10Cont.movej(possau_up2,1)
 		sleep(1)
@@ -100,9 +107,11 @@ class PickNPlace():
 		# cake
 		self.UR10Cont.movej(poscake_up1,1)
 		sleep(1)
+		self.pump.toggle("pinch") # pinch position 90 degrees
+		sleep(1)
 		self.UR10Cont.movej(poscake_pick,1)
 		sleep(1)
-		self.pump.toggle(sa1)
+		self.pump.toggle("sa1")
 		sleep(1)
 		self.UR10Cont.movej(poscake_up1,1)
 		sleep(1) 
@@ -110,7 +119,7 @@ class PickNPlace():
 		sleep(1)
 		self.UR10Cont.movej(poscake_drop,1)
 		sleep(1)
-		self.pump.toggle(sa0)
+		self.pump.toggle("sa0")
 		sleep(0.5)
 		self.UR10Cont.movej(poscake_up2,1)
 		sleep(1)
@@ -118,9 +127,11 @@ class PickNPlace():
 		# cherry 1
 		self.UR10Cont.movej(poscherry1_up1,1)
 		sleep(1)
+		self.pump.toggle("claw") # claw position 45 degrees
+		sleep(1)
 		self.UR10Cont.movej(poscherry1_pick,1)
 		sleep(1)
-		self.pump.toggle(sa1)
+		self.pump.toggle("sa1")
 		sleep(2)
 		self.UR10Cont.movej(poscherry1_up1,1)
 		sleep(1) 
@@ -128,7 +139,7 @@ class PickNPlace():
 		sleep(1)
 		self.UR10Cont.movej(poscherry1_drop,1)
 		sleep(1)
-		self.pump.toggle(sa0)
+		self.pump.toggle("sa0")
 		sleep(0.5)
 		self.UR10Cont.movej(poscherry1_up2,1)
 		sleep(1)
@@ -136,9 +147,11 @@ class PickNPlace():
 		# cherry 2
 		self.UR10Cont.movej(poscherry2_up1,1)
 		sleep(1)
+		self.pump.toggle("claw") # claw position 45 degrees
+		sleep(1)
 		self.UR10Cont.movej(poscherry2_pick,1)
 		sleep(1)
-		self.pump.toggle(sa1)
+		self.pump.toggle("sa1")
 		sleep(2)
 		self.UR10Cont.movej(poscherry2_up1,1)
 		sleep(1) 
@@ -146,7 +159,7 @@ class PickNPlace():
 		sleep(1)
 		self.UR10Cont.movej(poscherry2_drop,1)
 		sleep(1)
-		self.pump.toggle(sa0)
+		self.pump.toggle("sa0")
 		sleep(0.5)
 		self.UR10Cont.movej(poscherry2_up2,1)
 		sleep(2)
