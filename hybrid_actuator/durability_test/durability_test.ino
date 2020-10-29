@@ -6,7 +6,7 @@
 */
 
 #include "SPI.h"                          // To communicate with SPI devices
-#include "TFT_eSPI.h"                     // Arduino IDE compatible graphics and fonts library
+// #include "TFT_eSPI.h"                     // Arduino IDE compatible graphics and fonts library
 // #include "Free_Fonts.h"                   // Include the header file attached to this sketch
 // #include "NUS.h"                          // NUS logo
 #include <Wire.h>                         // This is needed for FT6206 
@@ -151,12 +151,18 @@ void loop(void) //--------------------------------------------------------------
     char c = Serial.read();
     ipw += c;
     if(ipw == "start") cyclic_valve(); // only start cyclic counts when Python starts
+    if(ipw == "reset") reset();
   }
   ipw = "";
-  delay(1);
+//  delay(1);
 }
 
 // Functions ----------------------------------------------------------------------------------------------------------------------------------------------------
+
+void reset() {
+  Serial.print("reset");
+  count = 0;
+}
 
 void read_while_rest(int setTime) { // function to call read
   startT = millis();

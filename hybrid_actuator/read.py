@@ -35,8 +35,6 @@ class controller:
 		new_strings = new_string[0:len(new_string)]
 		lengthL = len(new_strings) 
 		self.decodedbytes = np.zeros(lengthL)
-		# NowTime = time.time()-self.start
-		# self.file.write(str(NowTime) + ',')	# get tactile values -1
 		for index in range(len(new_strings)):
 			toconvert = new_strings[index]
 			self.decodedbytes[index] = float(toconvert)
@@ -88,5 +86,6 @@ if __name__ == '__main__':
 		except KeyboardInterrupt:
 			# board.cmd(0)
 			board.StopRecording()
+			board.cmd("reset")
 			break
 
