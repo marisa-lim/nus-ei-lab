@@ -159,8 +159,10 @@ void loop(void) //--------------------------------------------------------------
 
 // Functions ----------------------------------------------------------------------------------------------------------------------------------------------------
 
+
 void reset() {
   Serial.print("reset");
+  // stop cyclic valve
   count = 0;
 }
 
@@ -172,12 +174,13 @@ void read_while_rest(int setTime) { // function to call read
 }
 
 void cyclic_valve() {
-  for (int i = 0; i < 5000; i++) {
+  for (int i = 0; i < 5000; i++) { // change number of cycles accordingly
     TNTPWM.set_channel_value(1, 4095); // valve on
     read_while_rest(period / 2); // 3 seconds - 3000 ms
     TNTPWM.set_channel_value(1, 0); // valve off
     read_while_rest(period / 2); // 3 seconds - 3000 ms
     count += 1; // counting cycles
+    
   }
 }
 

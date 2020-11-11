@@ -37,8 +37,8 @@ class controller:
 		self.decodedbytes = np.zeros(lengthL)
 		for index in range(len(new_strings)):
 			toconvert = new_strings[index]
-			self.decodedbytes[index] = float(toconvert)
-			self.file.write(str(self.decodedbytes[index]) + ', ')	# get tactile values -1
+			self.decodedbytes[index] = float(toconvert) # ERROR HERE BCOS CYCLE HAS STOPPED - NOTHING TO READ
+			self.file.write(str(self.decodedbytes[index]) + ' ')	# get tactile values -1
 		self.file.write('\n')
 		print(self.decodedbytes)
 
@@ -76,16 +76,22 @@ if __name__ == '__main__':
 	# board.toggleValve(3)
 	# board.read_while_rest(5)
 	# board.cmd(4)
-	board.cmd("start") # start cyclic count on Arduino code
+	#board.cmd("reset")
+	#board.cmd("start") # start cyclic count on Arduino code
 	while True:
 		try:
+			for i in range(5000):
 			# board.cyclicActivation(1)
-			board.readADC()
+				board.cmd("start")
+				board.readADC()
 			# board.pressureControl(2,107)
 			# board.toggleValve(2)
 		except KeyboardInterrupt:
 			# board.cmd(0)
 			board.StopRecording()
 			board.cmd("reset")
+			
 			break
+
+
 
