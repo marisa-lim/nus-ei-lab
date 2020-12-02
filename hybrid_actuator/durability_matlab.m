@@ -6,53 +6,53 @@
 clc
 clear
 
-[name, path] = uigetfile('*.txt', 'Select file to open');
-
-file = [path, name];
+%[name, path] = uigetfile('*.txt', 'Select file to open');
+% 
+%file = [path, name];
 
 % Load data
-data = textread(file, '%f', 'headerlines', 1); % To remove any headerlines and get the first column
-% x: pressure data in kPa
-x = data(2:2:end);
-% c: cycle vector
-c = data(1:2:end);
+%data = load(file);
+%csvwrite(file, data); % To remove any headerlines and get the first column
+filename1 = '_nrp finger 42113 cycles.txt';
+fileID1 = fopen(filename1);
+data1 = textscan(fileID1, '%f %f');
+fclose(fileID1);
+x1(:,1) = data1{:,1};% c: cycle vector
+x1(:,2) = data1{:,2};% x: pressure data in kPa
 
-fz = %sampling frequency
-T = 1/fz %sampling period
-% t: time vector (conversion from cycle to time instant)
-dur = %full duration of experiment in seconds
-t = linspace(0, dur, T) % t array should be same length as the c array
+filename2 = '_nrp finger 11137 cycles_.txt';
+fileID2 = fopen(filename2);
+data2 = textscan(fileID2, '%f %f');
+fclose(fileID2);
+x2(:,1) = data2{:,1}+42113+1;% c: cycle vector
+x2(:,2) = data2{:,2};
 
-% To see full plot of data
-% plot(c, x, 'b');
+filename3 = '_nrp finger 14959 cycles_.txt';
+fileID3 = fopen(filename3);
+data3 = textscan(fileID3, '%f %f');
+fclose(fileID3);
+x3(:,1) = data3{:,1}+42113+11137+2; % c: cycle vector
+x3(:,2) = data3{:,2};% x: pressure data in kPa
 
-% Loop to find peak in every 5000th cycle starting from cycle 1
-last_cycle = t(end);
-n_cycles = fix(last_cycle/5000) % number of cycles we are interested in (floor division)
+filename4 = '_nrp finger 3103 cycles_.txt';
+fileID4 = fopen(filename4);
+data4 = textscan(fileID4, '%f %f');
+fclose(fileID4);
+x4(:,1) = data4{:,1}+42113+11137+14959+3; % c: cycle vector
+x4(:,2) = data4{:,2};% x: pressure data in kPa
 
-% Each cycle is 6 second: 3 seconds valve on, 3 seconds valve off
-n_rows = n_cycles * (6/T) % number of rows expected in final array
-cycle_arr = ones(n_rows, 2) % only 2 columns - [t,x]
+x = cat(1, x1, x2, x3, x4);
+
+last_cycle = x(end,1);
+n_cycles = fix(last_cycle/5000) + 1; % number of cycles we are interested in (floor division)
 
 % Create an array with only the cycles and time instants we are interested in
-for i = 0:length(c) % loop through the cycle array
-  if c(i) == 1 % if within first cycle
-    cycle_arr(i,0) = t(i); % first column is corresponding time instant
-    cycle_arr(i,1) = x(i); % second column is corresponding pressure value
-  elseif mod(c(i)/5000) == 0 % if within every 5000th cycle
-    cycle_arr(i,0) = t(i); % first column is corresponding time instant
-    cycle_arr(i,1) = x(i); % second column is corresponding pressure value
-  end
+for i = 1:n_cycles % loop through the cycle array
+    [index, cycle] = find(x(:,1) == (1+5000*(i-1)));
+    final((1+500*(i-1) : (1+500*(i-1)+499)), 2) = x((index(1):index(500)), 2);
 end
 
-% Print the cycle_arr
-disp(cycle_arr);
+plot(final, 'b');
 
-% Find peaks
-[pks,locs] = findpeaks(cycle_arr);
-% Plot graph showing peaks
-x_axis = cycle_arr(:,0)
-y_axis = cycle_arr(:,1)
-plot(t,y_axis,t(locs),pks,'or')
-xlabel('Time (s)')
-ylabel('Pressure (kPa)')
+% % Find peaks
+% [pks, locs] = findpeaks(final(:,2));

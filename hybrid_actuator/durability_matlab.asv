@@ -1,0 +1,116 @@
+% MATLAB Code to find peaks for every 5000 cycles of durability test
+% Written by Marisa Lim
+
+% Loading file - opens a window for user to select .txt file
+
+clc
+clear
+
+%[name, path] = uigetfile('*.txt', 'Select file to open');
+% 
+%file = [path, name];
+
+% Load data
+%data = load(file);
+%csvwrite(file, data); % To remove any headerlines and get the first column
+filename1 = '_nrp finger 42113 cycles.txt';
+fileID1 = fopen(filename1);
+data1 = textscan(fileID1, '%f %f');
+fclose(fileID1);
+
+filename2 = '_nrp finger 11137 cycles_.txt';
+fileID2 = fopen(filename2);
+data2 = textscan(fileID2, '%f %f');
+fclose(fileID2);
+
+filename3 = '_nrp finger 14959 cycles_.txt';
+fileID3 = fopen(filename3);
+data3 = textscan(fileID3, '%f %f');
+fclose(fileID3);
+
+% x: pressure data in kPa
+x1(:,2) = data1{:,2};
+% c: cycle vector
+x1(:,1) = data1{:,1};
+
+x2(:,2) = data2{:,2};
+% c: cycle vector
+x2(:,1) = data2{:,1}+42113;
+
+x3(:,2) = data3{:,2};
+% c: cycle vector
+x3(:,1) = data3{:,1}+42113+11137;
+
+% x(:,1) = [x1(:,1) x2(:,1) x3(:,1)];
+% x(:,2) = x1(:,2)+x2(:,2)+x3(:,2);
+
+%x = [x1{:} x2{:} x3{:}];
+[r1, c1] = size(x1);
+[r2, c1] = size(x1);
+[r1, c1] = size(x1);
+
+last_cycle = x(end,1);
+n_cycles = fix(last_cycle/5000) + 1; % number of cycles we are interested in (floor division)
+
+
+
+%final_arr = ones((500*n_cycles)); % each cycle has 500 inputs
+
+% Create an array with only the cycles and time instants we are interested in
+for i = 1:n_cycles % loop through the cycle array
+    [index, cycle] = find(x(:,1) == (1+5000*(i-1)));
+    final((1+500*(i-1) : (1+500*(i-1)+499)), 2) = x((index(1):index(500)), 2);
+end
+
+plot(final);
+    
+%     
+%   if x(i,1) == 1 % if within first cycle
+%     final_arr(i) = x(i,2); % first column is corresponding time instant
+%   elseif mod(x(i,1)/5000) == 0 % if within every 5000th cycle
+%     final_arr(i) = x(i,2); % first column is corresponding time instant
+%     cycle_arr(i,1) = x(i); % second column is corresponding pressure value
+%   end
+% end
+% 
+% 
+
+% fz = 0.001 %sampling frequency - need to find freq
+% T = 1/fz %sampling period
+% % t: time vector (conversion from cycle to time instant)
+% dur = 100000000 %full duration of experiment in seconds
+% t = linspace(0, dur, T) % t array should be same length as the c array
+% 
+% % To see full plot of data
+% plot(c, x, 'b');
+% 
+% % Loop to find peak in every 5000th cycle starting from cycle 1
+% last_cycle = t(end);
+% n_cycles = fix(last_cycle/5000) % number of cycles we are interested in (floor division)
+% 
+% % Each cycle is 6 second: 3 seconds valve on, 3 seconds valve off
+% n_rows = n_cycles * (6/T) % number of rows expected in final array
+% cycle_arr = ones(n_rows, 2) % only 2 columns - [t,x]
+% 
+% % Create an array with only the cycles and time instants we are interested in
+% for i = 1:length(c) % loop through the cycle array
+%   if isequal(c(i),c) % if within first cycle
+%     cycle_arr(i,0) = t(i); % first column is corresponding time instant
+%     cycle_arr(i,1) = x(i); % second column is corresponding pressure value
+%   elseif mod(c(i)/5000) == 0 % if within every 5000th cycle
+%     cycle_arr(i,0) = t(i); % first column is corresponding time instant
+%     cycle_arr(i,1) = x(i); % second column is corresponding pressure value
+%   end
+% end
+% 
+% % Print the cycle_arr
+% %disp(cycle_arr);
+% 
+% % Find peaks
+% [pks,locs] = findpeaks(cycle_arr);
+% % Plot graph showing peaks
+% x_axis = cycle_arr(:,0);
+% y_axis = cycle_arr(:,1);
+% plot(t,y_axis,t(locs),pks,'or');
+% xlabel('Time (s)');
+% ylabel('Pressure (kPa)');
